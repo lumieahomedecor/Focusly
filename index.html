@@ -1,13 +1,60 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#8b7cf6"><link rel="manifest" href="manifest.webmanifest"><title>Focusly — Study Smarter</title><link rel="stylesheet" href="styles.css"></head><body>
-<div id="headphones" class="modal"><div class="modal-card"><div class="big">🎧</div><h2>Headphones recommended</h2><p>For the best Focusly drawing and focus experience, headphones are recommended.</p><button id="continueBtn">Continue</button></div></div>
-<header><div class="brand">Focusly</div><div class="header-actions"><button id="audioToggle">🔇</button><button id="buddyToggle">Buddy</button></div></header>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#8b7cf6">
+<meta name="description" content="Focusly — a student study companion for lessons, practice, focus sessions and planning.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="styles.css">
+<title>Focusly — Study Smarter</title>
+</head>
+<body>
+<div id="headphones" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="headphonesTitle">
+  <div class="modal-card">
+    <div class="big">🎧</div><h2 id="headphonesTitle">Headphones recommended</h2>
+    <p>Focusly uses a gentle, locally generated focus beat. Your browser may require a tap before audio can play.</p>
+    <button id="continueBtn" class="primary">Continue</button>
+  </div>
+</div>
+<header>
+  <div class="brand">Focusly</div>
+  <div class="header-actions"><button id="audioToggle" aria-label="Toggle focus audio">🔇</button><button id="buddyToggle">Buddy</button></div>
+</header>
 <main>
-<section id="home" class="view active"><div class="hero"><div><span class="eyebrow">YOUR STUDY COMPANION</span><h1>Focus better.<br>Learn your way.</h1><p>Study, practice, draw, plan, and get help with Focusly Buddy.</p><div class="actions"><button class="primary" data-nav="study">Start studying</button><button class="secondary" data-nav="focus">Focus mode</button></div></div><div class="hero-card"><div class="spark">✦</div><b>Small steps. Big progress.</b><span>Every lesson ends with practice.</span></div></div><div class="feature-grid"><article>📚<h3>Every lesson ends with a test</h3><p>Missed questions become personalized corrections and a retest.</p></article><article>🧠<h3>Homework & research help</h3><p>A natural-language study assistant built into your workspace.</p></article><article>📅<h3>Study around your timetable</h3><p>Build sessions around classes, exams, water breaks, and reminders.</p></article><article>📶<h3>Online + offline ready</h3><p>Keep your study flow and progress available when connection is limited.</p></article></div></section>
-<section id="study" class="view"><div class="section-head"><div><span class="eyebrow">LEARN</span><h2>Choose a subject</h2></div><label class="upload">Upload study material<input id="material" type="file" accept="application/pdf,image/*"></label></div><div id="subjects" class="subject-grid"></div><div id="lesson" class="panel hidden"></div></section>
-<section id="focus" class="view"><div class="section-head"><div><span class="eyebrow">FOCUS MODE</span><h2>Quiet time</h2></div><div id="timer">25:00</div></div><div class="focus-grid"><div class="canvas-panel"><canvas id="canvas"></canvas><div class="draw-tools"><button id="clearCanvas">Clear</button><span>Brush</span><input id="brush" type="range" min="1" max="24" value="5"></div></div><div class="panel"><h3>Focus audio</h3><p>Calm ambient beats with a soft steady pulse. No external audio file required.</p><button id="beatBtn" class="primary">Start calm beat</button><label class="volume">Volume <input id="volume" type="range" min="0" max="1" step=".01" value=".22"></label><hr><button id="timerBtn" class="secondary">Start 25-minute focus</button><p class="small">Browser audio starts after a tap/click, so your device can control autoplay safely.</p></div></div></section>
-<section id="ask" class="view"><span class="eyebrow">ASSISTANT</span><h2>Ask Focusly</h2><div class="chat panel"><div id="chatLog" class="chat-log"><div class="bubble bot">Hi! Ask me anything about your schoolwork. You don't need a special prompt.</div></div><div class="chat-row"><input id="question" placeholder="Ask a homework or research question…"><button id="sendAsk" class="primary">Send</button><button id="micAsk" title="Voice input">🎙️</button></div></div></section>
-<section id="plan" class="view"><span class="eyebrow">PLAN</span><h2>Your timetable</h2><div class="schedule panel"><div>Math practice <b>4:00 PM</b></div><div>Science review <b>5:00 PM</b></div><div>Water break <b>6:00 PM</b></div><div>SAT practice <b>7:00 PM</b></div></div></section>
+<section id="home" class="view active">
+  <div class="hero"><div><span class="eyebrow">YOUR STUDY COMPANION</span><h1>Focus better.<br>Learn your way.</h1><p>Study, practice, draw, plan, and talk naturally with Focusly Buddy.</p><div class="actions"><button class="primary" data-nav="study">Start studying</button><button class="secondary" data-nav="focus">Focus mode</button></div></div><div class="hero-card"><div class="spark">✦</div><b>Small steps. Big progress.</b><span>Learn → practice → correct → retest.</span></div></div>
+  <div class="feature-grid">
+    <article>📚<h3>Lessons + tests</h3><p>Practice multiple questions, see your score, review mistakes, and retest only what you missed.</p></article>
+    <article>🧠<h3>Study Helper</h3><p>Ask schoolwork questions in your own words. Focusly can answer common study topics without a special prompt.</p></article>
+    <article>📅<h3>Personal timetable</h3><p>Add study sessions and water breaks. Your plan is saved on this device.</p></article>
+    <article>📶<h3>Offline-friendly</h3><p>Your lessons, progress, planner, Buddy and focus beat work locally. Internet is needed for any future cloud AI connection.</p></article>
+  </div>
+</section>
+<section id="study" class="view">
+  <div class="section-head"><div><span class="eyebrow">LEARN</span><h2>Choose a subject</h2></div><label class="upload">Upload study material<input id="material" type="file" accept="application/pdf,image/*"></label></div>
+  <div id="materialList" class="material-list"></div><div id="subjects" class="subject-grid"></div><div id="lesson" class="panel hidden"></div>
+</section>
+<section id="focus" class="view">
+  <div class="section-head"><div><span class="eyebrow">FOCUS MODE</span><h2>Quiet time</h2></div><div id="timer">25:00</div></div>
+  <div class="focus-grid"><div class="canvas-panel"><canvas id="canvas" aria-label="Focus drawing canvas"></canvas><div class="draw-tools"><button id="clearCanvas" class="secondary">Clear</button><span>Brush</span><input id="brush" type="range" min="1" max="12" value="3" aria-label="Brush size"><output id="brushValue">3 px</output></div></div>
+  <div class="panel"><h3>Calm Focus Beat</h3><p>Soft ambient pulses, generated in your browser. No music file is downloaded.</p><button id="beatBtn" class="primary">Start calm beat</button><label class="volume">Volume <input id="volume" type="range" min="0" max="1" step=".01" value=".22"></label><hr><button id="timerBtn" class="secondary">Start 25-minute focus</button><button id="resetTimer" class="text-button">Reset timer</button><p class="small">Audio starts after a tap/click because browsers block unexpected autoplay.</p></div></div>
+</section>
+<section id="ask" class="view">
+  <span class="eyebrow">STUDY HELPER</span><h2>Ask Focusly</h2>
+  <div class="chat panel"><div id="chatLog" class="chat-log"><div class="bubble bot">Hi! Ask me about homework, studying, writing, math, science, or exam prep. You can phrase your question naturally.</div></div><div class="chat-row"><input id="question" autocomplete="off" placeholder="Ask a homework or study question…"><button id="sendAsk" class="primary">Send</button><button id="micAsk" title="Voice input" aria-label="Voice input">🎙️</button></div><p class="small helper-note">Offline Study Helper mode is active in this GitHub build. It does not pretend to be a live cloud AI service.</p></div>
+</section>
+<section id="plan" class="view">
+  <div class="section-head"><div><span class="eyebrow">PLAN</span><h2>Your timetable</h2></div><button id="addSession" class="primary">+ Add session</button></div>
+  <div id="schedule" class="schedule panel"></div>
+  <div class="panel reminder-panel"><h3>Reminders</h3><p>Turn on browser reminders for your saved study sessions and water breaks.</p><button id="enableReminders" class="secondary">Enable reminders</button><span id="reminderStatus" class="small"></span></div>
+</section>
 </main>
-<nav><button data-nav="home">⌂<span>Home</span></button><button data-nav="study">▣<span>Study</span></button><button data-nav="focus">✎<span>Focus</span></button><button data-nav="ask">◌<span>Ask</span></button><button data-nav="plan">☷<span>Plan</span></button></nav>
-<div id="buddy" class="buddy-wrap"><div id="buddyRobot" class="robot"><div class="antenna"><i></i></div><div class="head"><div class="ear l"></div><div class="ear r"></div><div class="eyes"><i></i><i></i></div><div class="cheek l"></div><div class="cheek r"></div><div class="mouth"></div></div><div class="neck"></div><div class="body"><div class="screen">♡</div></div><div class="arm l"></div><div class="arm r"></div><div class="foot l"></div><div class="foot r"></div></div><div class="buddy-card"><b>Focusly Buddy</b><span id="buddyStatus">Hey! I'm Buddy. Need anything?</span><div class="buddy-controls"><input id="nickname" placeholder="Buddy nickname"><select id="voice"></select></div><div class="buddy-row"><button id="speakBuddy">🔊 Speak</button><button id="listenBuddy">🎙️ Listen</button></div><div class="buddy-row"><input id="buddyInput" placeholder="Say anything to Buddy…"><button id="sendBuddy">Send</button></div><small>Try “Hey Buddy” or your chosen nickname. Prompts are unrestricted.</small></div></div>
-<script src="app.js"></script></body></html>
+<nav aria-label="Main navigation"><button data-nav="home">⌂<span>Home</span></button><button data-nav="study">▣<span>Study</span></button><button data-nav="focus">✎<span>Focus</span></button><button data-nav="ask">◌<span>Ask</span></button><button data-nav="plan">☷<span>Plan</span></button></nav>
+<div id="sessionModal" class="modal hidden"><div class="modal-card"><button class="modal-close" id="closeSession">×</button><h2>Add study session</h2><label>Title<input id="sessionTitle" placeholder="e.g. Biology review"></label><label>Time<input id="sessionTime" type="time"></label><label>Type<select id="sessionType"><option>Study</option><option>Water break</option><option>Exam prep</option><option>SAT</option></select></label><button id="saveSession" class="primary">Save session</button></div></div>
+<div id="buddy" class="buddy-wrap" aria-label="Focusly Buddy">
+  <div id="buddyRobot" class="robot" role="button" tabindex="0" aria-label="Drag Focusly Buddy"><div class="antenna"><i></i></div><div class="head"><div class="ear l"></div><div class="ear r"></div><div class="eyes"><i></i><i></i></div><div class="cheek l"></div><div class="cheek r"></div><div class="mouth"></div></div><div class="neck"></div><div class="body"><div class="screen">♡</div></div><div class="arm l"></div><div class="arm r"></div><div class="foot l"></div><div class="foot r"></div></div>
+  <div class="buddy-card"><div class="buddy-title"><b>Focusly Buddy</b><button id="buddyMinimize" class="mini-button" aria-label="Minimize Buddy">−</button></div><span id="buddyStatus">Hey! I'm Buddy. Need anything?</span><div class="buddy-controls"><input id="nickname" placeholder="Buddy nickname" maxlength="24"><select id="voice" aria-label="Buddy voice"></select></div><div class="buddy-row"><button id="speakBuddy">🔊 Speak</button><button id="listenBuddy">🎙️ Listen</button><button id="wakeBuddy">✨ Wake word</button></div><div class="buddy-row"><input id="buddyInput" autocomplete="off" placeholder="Say anything to Buddy…"><button id="sendBuddy">Send</button></div><small>Say “Hey Buddy”, “Buddy”, or use your chosen nickname. Prompts are unrestricted.</small></div>
+</div>
+<script src="app.js"></script>
+</body></html>
