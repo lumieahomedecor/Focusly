@@ -141,5 +141,16 @@
   <div class="buddy-chat"><input id="buddyInput" placeholder="Say anything to Buddy…"><button id="buddySend" class="primary">Send</button></div>
 </div>
 <script src="app.js"></script>
+
+<!-- Focusly Buddy enhancements -->
+<div id="focusly-enhancements" aria-live="polite">
+  <button id="buddyVoiceActivate" type="button" style="position:fixed;right:18px;bottom:18px;z-index:10000;border:0;border-radius:999px;padding:12px 16px;font-weight:700;box-shadow:0 6px 18px rgba(0,0,0,.14);">
+    🎙️ Activate Buddy Voice
+  </button>
+  <div id="focusly-lofi-controls" style="position:fixed;left:18px;bottom:18px;z-index:10000;display:flex;gap:8px;align-items:center;">
+    <button type="button" onclick="FocuslyLofi.toggle()" style="border:0;border-radius:999px;padding:10px 14px;font-weight:700;">🎧 Lo-fi</button>
+  </div>
+</div>
+
 </body>
 </html>

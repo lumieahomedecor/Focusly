@@ -29,3 +29,13 @@ The front-end is functional as a static GitHub Pages site. Live AI answers, acco
 
 ## Audio
 The focus beat is generated in-browser with Web Audio so the package does not depend on a copyrighted music file. Browsers generally require a user gesture before audio can start.
+
+
+### Buddy & Focus Mode enhancements
+- Animated, wandering and finger-draggable Focusly Buddy
+- Cute facial expressions for idle/listening/thinking/talking states
+- Cute selectable speech profiles through the Buddy voice UI
+- Voice activation support where browser speech recognition is available
+- Unrestricted natural-language Buddy input
+- Focus Mode lo-fi/steady beat generated locally with Web Audio
+- No private API keys or copyrighted audio files are embedded

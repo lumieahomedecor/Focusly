@@ -11,3 +11,26 @@ main{max-width:1100px;margin:auto;padding:24px 18px}.screen{display:none}.screen
 #buddy.buddy-talking .buddy-robot{animation:buddyTalk .2s ease-in-out infinite alternate}
 @keyframes buddyWalk{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-6px) rotate(2deg)}}
 @keyframes buddyTalk{from{transform:scale(1)}to{transform:scale(1.08)}}
+
+
+/* Focusly Buddy visual polish */
+.focusly-buddy-enhanced{
+  will-change: left, top, transform;
+  animation: buddy-bob 1.8s ease-in-out infinite;
+  filter: drop-shadow(0 8px 16px rgba(0,0,0,.14));
+}
+@keyframes buddy-bob{
+  0%,100%{transform:translateY(0) rotate(-1deg) scale(1)}
+  50%{transform:translateY(-7px) rotate(1deg) scale(1.025)}
+}
+.buddy-face{
+  position:absolute; inset:22% 18% auto;
+  height:35%; pointer-events:none; display:flex;
+  justify-content:center; align-items:center; gap:25%;
+  font-weight:800; color:currentColor;
+}
+.buddy-face .mouth{position:absolute; top:58%; font-size:1.25em}
+.buddy-face .eye{font-size:.9em}
+.focusly-buddy-enhanced[data-mood="listen"]{animation-duration:1s}
+.focusly-buddy-enhanced[data-mood="talk"]{animation-duration:.55s}
+
