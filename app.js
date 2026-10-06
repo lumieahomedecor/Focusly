@@ -1,96 +1,30 @@
-const $=s=>document.querySelector(s);
-const screens=[...document.querySelectorAll('.screen')];
-function nav(id){screens.forEach(s=>s.classList.toggle('active',s.id===id));window.scrollTo(0,0)}
-document.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>nav(b.dataset.nav)));
-
-const subjects=[
-["Mathematics","Algebra, geometry, functions & practice"],
-["English Language","Reading, writing, grammar & comprehension"],
-["Biology","Cells, systems, genetics & life science"],
-["Chemistry","Matter, reactions, equations & lab concepts"],
-["Physics","Motion, energy, forces & electricity"],
-["History","People, events, causes & consequences"],
-["Geography","Places, environments, maps & data"],
-["Computer Science","Algorithms, logic, coding & digital concepts"],
-["SAT","Reading, Writing & Math practice"]
-];
-const sg=$("#subjects");
-subjects.forEach(([name,desc])=>{
- const b=document.createElement("button"); b.className="subject";
- b.innerHTML=`<b>${name}</b><small>${desc}</small>`;
- b.onclick=()=>openLesson(name); sg.appendChild(b);
-});
-let currentSubject="", questionIndex=0, score=0;
-const qbank={
-"Mathematics":["If 2x + 4 = 10, what is x?","3","4","5","6"],
-"English Language":["Which word is a synonym for 'brief'?","long","short","loud","late"],
-"Biology":["What is the basic unit of life?","Atom","Cell","Organ","Tissue"],
-"Chemistry":["What is H₂O commonly called?","Oxygen","Hydrogen","Water","Salt"],
-"Physics":["What is the SI unit of force?","Joule","Watt","Newton","Volt"],
-"History":["Which event is commonly associated with 1776 in U.S. history?","Moon landing","Declaration of Independence","Civil War","Constitutional Convention"],
-"Geography":["Which tool is used to represent Earth's surface on a flat surface?","Thermometer","Map","Barometer","Scale"],
-"Computer Science":["What does an algorithm provide?","A random guess","A step-by-step procedure","A password","A drawing"],
-"SAT":["If x=5, what is 2x+3?","8","10","13","15"]
-};
-function openLesson(s){currentSubject=s;$("#lessonSubject").textContent=s.toUpperCase();$("#lessonTitle").textContent=`${s} lesson`;$("#lessonBody").textContent=`Focusly will teach a short ${s} concept, then check understanding with a quick evaluation. Missed answers can be corrected and retested.`;$("#lessonProgress").style.width="30%";nav("lesson")}
-$("#testBtn").onclick=()=>{questionIndex=0;score=0;renderQ();nav("test")};
-function renderQ(){const q=qbank[currentSubject]||qbank.Mathematics;$("#questionText").textContent=q[0];$("#answers").innerHTML="";$("#feedback").textContent="";$("#nextQuestion").classList.add("hidden");q.slice(1).forEach((a,i)=>{const b=document.createElement("button");b.className="answer";b.textContent=a;b.onclick=()=>answer(b,a,q);$("#answers").appendChild(b)})}
-function answer(btn,a,q){document.querySelectorAll(".answer").forEach(x=>x.disabled=true);const correct=q[1];if(a===correct){btn.classList.add("correct");score++;$("#feedback").textContent="Correct! Great work."}else{btn.classList.add("wrong");$("#feedback").textContent=`Not quite. The correct answer is ${correct}. Let's review it and try again.`}$("#nextQuestion").classList.remove("hidden")}
-$("#nextQuestion").onclick=()=>{if(questionIndex===0){questionIndex=1;const q=qbank[currentSubject]||qbank.Mathematics;const old=q.slice(1);$("#questionText").textContent="Which answer would you choose after reviewing the correction?";$("#answers").innerHTML="";["I understand the correction","I need another explanation","I want to retry"].forEach(a=>{const b=document.createElement("button");b.className="answer";b.textContent=a;b.onclick=()=>{b.classList.add("correct");$("#feedback").textContent="Nice. Personalized review complete — you can continue studying or retake the test.";$("#nextQuestion").classList.add("hidden")};$("#answers").appendChild(b)})}};
-
-$("#fileInput").onchange=e=>{const list=$("#fileList");list.innerHTML="";[...e.target.files].forEach(f=>{const d=document.createElement("div");d.className="file-item";d.innerHTML=`<span>📄 ${f.name}</span><small>${Math.round(f.size/1024)} KB</small>`;list.appendChild(d)})};
-
-// Drawing canvas
-const canvas=$("#canvas"),ctx=canvas.getContext("2d");let drawing=false;
-function resizeCanvas(){const r=canvas.getBoundingClientRect(),d=devicePixelRatio||1;canvas.width=r.width*d;canvas.height=r.height*d;ctx.scale(d,d);ctx.lineCap="round";ctx.lineJoin="round"}
-resizeCanvas();addEventListener("resize",resizeCanvas);
-function point(e){const r=canvas.getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top]}
-function start(e){drawing=true;ctx.beginPath();const [x,y]=point(e);ctx.moveTo(x,y);e.preventDefault()}
-function move(e){if(!drawing)return;const [x,y]=point(e);ctx.lineWidth=$("#brush").value;ctx.strokeStyle="#5e536f";ctx.lineTo(x,y);ctx.stroke();e.preventDefault()}
-function end(){drawing=false}
-canvas.addEventListener("pointerdown",start);canvas.addEventListener("pointermove",move);canvas.addEventListener("pointerup",end);canvas.addEventListener("pointerleave",end);
-$("#clearCanvas").onclick=()=>ctx.clearRect(0,0,canvas.width,canvas.height);
-
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const subjects=[['Mathematics','➗'],['English Language','📖'],['Biology','🧬'],['Chemistry','⚗️'],['Physics','⚛️'],['History','🏛️'],['Geography','🌎'],['Computer Science','💻'],['SAT','🎯']];
+const questions={Mathematics:['What is 12 × 8?',['86','96','108','88'],1],['English Language','What is the main purpose of a thesis statement?',['To decorate a paragraph','To state the central claim','To list every source','To end an essay'],1],Biology:['Which organelle is known as the powerhouse of the cell?',['Nucleus','Ribosome','Mitochondrion','Cell wall'],2],Chemistry:['What is the chemical symbol for oxygen?',['Ox','O','Og','Om'],1],Physics:['What is the SI unit of force?',['Joule','Watt','Newton','Pascal'],2],History:['Which ancient civilization built the pyramids at Giza?',['Roman','Egyptian','Viking','Mayan'],1],Geography:['What is the largest ocean on Earth?',['Atlantic','Indian','Arctic','Pacific'],3],['Computer Science','What does HTML primarily structure?',['Web page content','Wi-Fi signals','Hard-drive sectors','Battery chemistry'],0],SAT:['If 3x + 5 = 20, what is x?',['3','5','7','15'],1]};
+let currentSubject=null, lessonIndex=0, score=0;
+function renderSubjects(){ $('#subjects').innerHTML=subjects.map(([n,i])=>`<div class="subject" data-subject="${n}"><div class="icon">${i}</div><b>${n}</b><span class="small">Lesson + test</span></div>`).join(''); $$('.subject').forEach(x=>x.onclick=()=>startLesson(x.dataset.subject));}
+function startLesson(s){currentSubject=s;lessonIndex=0;score=0;renderLesson();}
+function renderLesson(){const q=questions[currentSubject]||['What are you studying today?',['Review notes','Practice problems','Take a break','Ask Buddy'],0];const el=$('#lesson');el.classList.remove('hidden');el.innerHTML=`<div class="eyebrow">LESSON</div><h3>${currentSubject}</h3><p>Mini lesson: review the key idea for <b>${currentSubject}</b>, then test your understanding.</p><div class="lesson-q">${q[0]}</div><div class="answers">${q[1].map((a,i)=>`<button data-a="${i}">${a}</button>`).join('')}</div><p id="result" class="small">Question ${lessonIndex+1} of 1</p>`; $$('.answers button').forEach(b=>b.onclick=()=>{const ok=+b.dataset.a===q[2];if(ok)score++;$('#result').textContent=ok?'Correct! 🎉 Great job.':'Not quite — review the idea and try again.';setTimeout(()=>showResult(ok,q),500)});el.scrollIntoView({behavior:'smooth'});}
+function showResult(ok,q){const el=$('#lesson');el.innerHTML+=`<div class="panel" style="margin-top:16px"><b>${ok?'You got it!':'Personalized correction'}</b><p>${ok?'Keep going — retrieval practice helps it stick.':'The correct answer is <b>'+q[1][q[2]]+'</b>. Read the question again, explain why that answer works, then retest yourself.'}</p><button class="primary" id="retest">${ok?'Finish lesson':'Retest'}</button></div>`;$('#retest').onclick=()=>ok?el.classList.add('hidden'):renderLesson();}
+$$('[data-nav]').forEach(b=>b.onclick=()=>{ $$('.view').forEach(v=>v.classList.remove('active'));$('#'+b.dataset.nav).classList.add('active');window.scrollTo({top:0,behavior:'smooth'})});
+renderSubjects();
+$('#material').onchange=e=>{if(e.target.files[0]) alert(`Added: ${e.target.files[0].name}\nFocusly can keep this study material available locally.`)};
+// Focus canvas
+const canvas=$('#canvas'),ctx=canvas.getContext('2d');function resizeCanvas(){const r=canvas.getBoundingClientRect(),d=devicePixelRatio||1;canvas.width=r.width*d;canvas.height=r.height*d;ctx.setTransform(d,0,0,d,0,0)}resizeCanvas();addEventListener('resize',resizeCanvas);let drawing=false,last=null;function point(e){const r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left),y:e.clientY-r.top}}canvas.addEventListener('pointerdown',e=>{drawing=true;last=point(e);canvas.setPointerCapture(e.pointerId)});canvas.addEventListener('pointermove',e=>{if(!drawing)return;const p=point(e);ctx.strokeStyle='#8b7cf6';ctx.lineWidth=+$('#brush').value;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(last.x,last.y);ctx.lineTo(p.x,p.y);ctx.stroke();last=p});canvas.addEventListener('pointerup',()=>drawing=false);$('#clearCanvas').onclick=()=>ctx.clearRect(0,0,canvas.width,canvas.height);
 // Timer
-let seconds=1500,timerHandle=null;function paintTime(){let m=Math.floor(seconds/60),s=seconds%60;$("#timer").textContent=`${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`}
-$("#timerStart").onclick=()=>{if(timerHandle){clearInterval(timerHandle);timerHandle=null;$("#timerStart").textContent="Start 25-minute focus";return}$("#timerStart").textContent="Pause focus";timerHandle=setInterval(()=>{if(seconds>0){seconds--;paintTime()}else{clearInterval(timerHandle);timerHandle=null}},1000)};paintTime();
-
-// Focus audio: generated locally with Web Audio (no copyrighted track required)
-let audioCtx, master, beatTimer, audioOn=false;
-function startAudio(){if(!audioCtx){audioCtx=new (window.AudioContext||window.webkitAudioContext)();master=audioCtx.createGain();master.gain.value=.045;master.connect(audioCtx.destination)}
-audioCtx.resume();audioOn=true;$("#soundBtn").textContent="🔊";$("#audioStart").textContent="Lo-fi focus audio playing";
-if(beatTimer)return; beatTimer=setInterval(()=>{const t=audioCtx.currentTime; const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type="sine";o.frequency.value=110;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.18,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+.18);o.connect(g);g.connect(master);o.start(t);o.stop(t+.2)},900)}
-function stopAudio(){if(audioCtx){audioCtx.suspend();}audioOn=false;$("#soundBtn").textContent="🔇"}
-$("#audioStart").onclick=()=>audioOn?stopAudio():startAudio();$("#soundBtn").onclick=()=>audioOn?stopAudio():startAudio();
-
+let seconds=1500,timer=null;function showTimer(){let m=String(Math.floor(seconds/60)).padStart(2,'0'),s=String(seconds%60).padStart(2,'0');$('#timer').textContent=`${m}:${s}`};$('#timerBtn').onclick=()=>{if(timer){clearInterval(timer);timer=null;$('#timerBtn').textContent='Start 25-minute focus'}else{timer=setInterval(()=>{seconds--;showTimer();if(seconds<=0){clearInterval(timer);timer=null;alert('Focus session complete! 🎉')}},1000);$('#timerBtn').textContent='Pause focus';startBeat()}};showTimer();
+// Calm synthesized beat
+let audioCtx=null,master=null,beatTimer=null;function initAudio(){if(!audioCtx){audioCtx=new (window.AudioContext||window.webkitAudioContext)();master=audioCtx.createGain();master.gain.value=+$('#volume').value;master.connect(audioCtx.destination)}}function pulse(t,f=120,d=.12,g=.045){const o=audioCtx.createOscillator(),a=audioCtx.createGain();o.type='sine';o.frequency.value=f;a.gain.setValueAtTime(0,t);a.gain.linearRampToValueAtTime(g,t+.01);a.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(a);a.connect(master);o.start(t);o.stop(t+d+.03)}function beat(){initAudio();const t=audioCtx.currentTime;pulse(t,110,.16,.055);pulse(t+.48,82,.2,.025);pulse(t+.94,110,.16,.045)}function startBeat(){initAudio();if(audioCtx.state==='suspended')audioCtx.resume();if(!beatTimer){beat();beatTimer=setInterval(beat,1000);$('#beatBtn').textContent='Pause calm beat';$('#audioToggle').textContent='🔊'}}function stopBeat(){clearInterval(beatTimer);beatTimer=null;$('#beatBtn').textContent='Start calm beat';$('#audioToggle').textContent='🔇'}$('#beatBtn').onclick=()=>beatTimer?stopBeat():startBeat();$('#audioToggle').onclick=()=>beatTimer?stopBeat():startBeat();$('#volume').oninput=e=>{if(master)master.gain.value=+e.target.value};$('#continueBtn').onclick=()=>{$('#headphones').style.display='none';startBeat()};
 // Buddy
-const buddy=$("#buddy"),panel=$("#buddyPanel");let dragging=false,offset=[0,0];
-buddy.addEventListener("pointerdown",e=>{dragging=true;const r=buddy.getBoundingClientRect();offset=[e.clientX-r.left,e.clientY-r.top];buddy.setPointerCapture(e.pointerId)});
-buddy.addEventListener("pointermove",e=>{if(!dragging)return;buddy.style.left=(e.clientX-offset[0])+"px";buddy.style.top=(e.clientY-offset[1])+"px";buddy.style.right="auto";buddy.style.bottom="auto"});
-buddy.addEventListener("pointerup",()=>dragging=false);
-$("#buddyOpenBtn").onclick=()=>panel.classList.toggle("hidden");$("#buddyClose").onclick=()=>panel.classList.add("hidden");
-function buddyReply(msg){const name=$("#buddyName").value||"Buddy";const replies=[`I'm here. Let's take it one step at a time.`,`You’ve got this. Want to focus for the next 10 minutes?`,`Good question. I can help you break that down.`,`Let's make this simpler together.`];const text=replies[Math.floor(Math.random()*replies.length)];$("#buddyBubble").textContent=`${name}: ${text}`;return text}
-$("#buddySend").onclick=()=>{const v=$("#buddyInput").value.trim();if(v){const t=buddyReply(v);if(speechSynthesis) speechSynthesis.speak(new SpeechSynthesisUtterance(t));$("#buddyInput").value=""}};
-$("#buddySpeak").onclick=()=>{const t=buddyReply("");if(speechSynthesis){const u=new SpeechSynthesisUtterance(t);const mode=$("#voiceSelect").value;u.pitch=mode==="bright"?1.2:mode==="soft"?.85:1;u.rate=mode==="soft"?.9:1;speechSynthesis.speak(u)}};
+const buddy=$('#buddy'),robot=$('#buddyRobot');let drag=false,offset={x:0,y:0};robot.addEventListener('pointerdown',e=>{drag=true;offset={x:e.clientX-buddy.offsetLeft,y:e.clientY-buddy.offsetTop};robot.setPointerCapture(e.pointerId)});robot.addEventListener('pointermove',e=>{if(!drag)return;buddy.style.left=Math.max(8,e.clientX-offset.x)+'px';buddy.style.top=Math.max(70,e.clientY-offset.y)+'px';buddy.style.right='auto';buddy.style.bottom='auto'});robot.addEventListener('pointerup',()=>drag=false);$('#buddyToggle').onclick=()=>{$('.buddy-card').style.display=$('.buddy-card').style.display==='none'?'block':'none'};$('#nickname').value=localStorage.getItem('focuslyNickname')||'Buddy';$('#nickname').onchange=e=>localStorage.setItem('focuslyNickname',e.target.value||'Buddy');
+function voices(){const vs=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang));$('#voice').innerHTML=vs.map((v,i)=>`<option value="${i}">${v.name.replace(/Microsoft |Google |Apple /,'')}</option>`).join('')||'<option>Default voice</option>'}voices();speechSynthesis.onvoiceschanged=voices;
+function buddyReply(text){const n=$('#nickname').value||'Buddy';const t=text.toLowerCase();let reply;if(/hello|hey|hi/.test(t))reply=`Hey! I'm ${n}. I'm happy you're here. What are you working on?`;else if(/math|equation|algebra|calculate/.test(t))reply=`Absolutely! Send me the math problem and I'll walk through it step by step.`;else if(/study|focus|exam|test/.test(t))reply=`You've got this. Let's break it into one small task at a time, then test what you remember.`;else if(/sad|stressed|tired|overwhelmed/.test(t))reply=`Take a breath. You don't have to finish everything at once. Let's choose the next tiny step together.`;else reply=`I hear you. Tell me a little more, and I'll help you work through it. You can ask me anything in your own words.`;$('#buddyStatus').textContent=reply;speak(reply);happy();return reply}
+function speak(text){const u=new SpeechSynthesisUtterance(text);const vs=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang));const idx=+$('#voice').value;if(vs[idx])u.voice=vs[idx];u.rate=.96;u.pitch=1.18;robot.parentElement.classList.add('talking');u.onend=()=>robot.parentElement.classList.remove('talking');speechSynthesis.cancel();speechSynthesis.speak(u)}function happy(){robot.parentElement.classList.add('happy');setTimeout(()=>robot.parentElement.classList.remove('happy'),1300)}$('#speakBuddy').onclick=()=>speak($('#buddyStatus').textContent);$('#sendBuddy').onclick=()=>{const v=$('#buddyInput').value.trim();if(v){buddyReply(v);$('#buddyInput').value=''}};$('#buddyInput').addEventListener('keydown',e=>{if(e.key==='Enter')$('#sendBuddy').click()});
+let recognition=null;if('webkitSpeechRecognition'in window||'SpeechRecognition'in window){const R=window.SpeechRecognition||window.webkitSpeechRecognition;recognition=new R();recognition.continuous=false;recognition.interimResults=false;recognition.lang='en-US';recognition.onstart=()=>buddy.parentElement?.classList.add('listening')||robot.parentElement.classList.add('listening');recognition.onend=()=>robot.parentElement.classList.remove('listening');recognition.onresult=e=>{const text=e.results[0][0].transcript;const n=($('#nickname').value||'Buddy').toLowerCase();$('#buddyInput').value=text; if(text.toLowerCase().includes('hey buddy')||text.toLowerCase().includes('buddy')||text){buddyReply(text)}}}
+$('#listenBuddy').onclick=()=>recognition?recognition.start():alert('Voice input is not supported in this browser.');$('#micAsk').onclick=()=>{if(!recognition)return alert('Voice input is not supported in this browser.');recognition.onresult=e=>{$('#question').value=e.results[0][0].transcript;sendQuestion()};recognition.start()};
+// Natural unrestricted Ask interface; static fallback is intentionally safe for GitHub Pages.
+function sendQuestion(){const q=$('#question').value.trim();if(!q)return;$('#chatLog').insertAdjacentHTML('beforeend',`<div class="bubble user"></div>`);$('#chatLog').lastElementChild.textContent=q;let a='I can help you think it through. Break the question into: what you know, what you need to find, and what evidence or steps connect them. For a live AI tutor, connect your preferred secure backend API.';if(/photosynthesis/i.test(q))a='Photosynthesis is the process plants use to convert light energy into chemical energy, mainly producing glucose from carbon dioxide and water and releasing oxygen.';if(/quadratic/i.test(q))a='For a quadratic equation, try factoring first. If it cannot be factored easily, the quadratic formula can find the roots.';$('#chatLog').insertAdjacentHTML('beforeend',`<div class="bubble bot"></div>`);$('#chatLog').lastElementChild.textContent=a;$('#question').value='';$('#chatLog').scrollTop=999999}$('#sendAsk').onclick=sendQuestion;$('#question').addEventListener('keydown',e=>{if(e.key==='Enter')sendQuestion()};
+// “Hey Buddy” activation while the page is focused.
+if(recognition){let armed=false;const oldStart=recognition.start.bind(recognition);setTimeout(()=>{try{recognition.start();armed=true}catch(e){}},1200);recognition.onresult=e=>{const text=e.results[0][0].transcript;const low=text.toLowerCase();if(low.includes('hey buddy')||low.includes('buddy'))buddyReply(text.replace(/hey buddy|buddy/ig,'').trim()||'hello');else if(armed){} };recognition.onend=()=>{robot.parentElement.classList.remove('listening');setTimeout(()=>{try{recognition.start()}catch(e){}},600)}}
 
-// Ask assistant local fallback
-$("#chatForm").onsubmit=e=>{e.preventDefault();const input=$("#chatInput"),v=input.value.trim();if(!v)return;addMsg(v,"user");input.value="";setTimeout(()=>addMsg("I’m your Focusly study assistant. Connect an AI API/backend to enable live homework, research, and personalized answers. For now, I can help you navigate your study tools and practice flow.","buddy"),250)}
-function addMsg(t,c){const d=document.createElement("div");d.className=`msg ${c}`;d.textContent=t;$("#chat").appendChild(d);d.scrollIntoView({behavior:"smooth",block:"end"})}
-addMsg("Hi! I’m Focusly. Ask me about your homework, research, or what you should study next.","buddy");
-
-// Headphone recommendation only once per browser
-if(!localStorage.focuslyHeadphonesSeen){$("#headphoneNotice").classList.remove("hidden")}
-$("#continueBtn").onclick=()=>{$("#headphoneNotice").classList.add("hidden");localStorage.focuslyHeadphonesSeen="1"};
-
-/* Focusly Buddy — animated and draggable */
-(function(){
-  const b=document.getElementById('buddy'); if(!b)return;
-  let x=Math.max(10,innerWidth-100), y=Math.max(90,innerHeight-180), vx=.55, vy=.18, drag=false,lx=0,ly=0;
-  function pos(){x=Math.max(8,Math.min(innerWidth-90,x));y=Math.max(70,Math.min(innerHeight-110,y));b.style.left=x+'px';b.style.top=y+'px';b.style.right='auto';b.style.bottom='auto'}
-  function loop(){if(!drag){x+=vx;y+=vy;if(x<8||x>innerWidth-90)vx*=-1;if(y<70||y>innerHeight-110)vy*=-1}b.style.transform=`translateY(${Math.sin(Date.now()/260)*3}px)`;pos();requestAnimationFrame(loop)}
-  b.addEventListener('pointerdown',e=>{drag=true;lx=e.clientX;ly=e.clientY;b.setPointerCapture?.(e.pointerId);b.classList.add('buddy-dragging')});
-  b.addEventListener('pointermove',e=>{if(!drag)return;x+=e.clientX-lx;y+=e.clientY-ly;lx=e.clientX;ly=e.clientY;pos()});
-  b.addEventListener('pointerup',()=>{drag=false;b.classList.remove('buddy-dragging')});
-  addEventListener('resize',pos);pos();loop();
-  window.focuslyBuddyReact=()=>{b.classList.add('buddy-talking');setTimeout(()=>b.classList.remove('buddy-talking'),900)}
-})();
+if('serviceWorker' in navigator) navigator.serviceWorker.register('./service-worker.js').catch(()=>{});

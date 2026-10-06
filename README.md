@@ -1,35 +1,27 @@
-# Focusly — GitHub-ready starter
+# Focusly — Final GitHub Pages Package
 
-This package is a fresh GitHub-ready rebuild based on the Focusly requirements discussed in the conversations:
-- Student study assistant
-- PDF/photo study-material uploads
-- Main subjects + SAT
-- Short lessons followed by tests
-- Correction/retest flow for missed answers
-- Homework/research assistant interface
-- Timetable/study planning
-- Exam and water-break reminders UI
-- Online/offline-friendly static shell
-- Focus mode with drawing canvas
-- Soft, steady locally generated lo-fi-style focus audio
-- Headphones-recommended notice
-- Floating, draggable Focusly Buddy
-- Buddy can be activated conversationally and accepts unrestricted natural text
-- Buddy nickname and voice options
-- Mobile-first interface
+This package combines the requested Focusly experience:
+- Cute CSS-drawn mini-robot Buddy (not an emoji)
+- Floating/dragging Buddy with idle movement
+- Cute expressions, blinking, talking/listening animation
+- Natural speech-synthesis voice choices with adjustable voice selection
+- Voice input and “Hey Buddy” / “Buddy” activation where browser SpeechRecognition is supported
+- Unrestricted natural-language Buddy prompts
+- Calm synthesized ambient beat with soft steady pulse
+- Headphones recommendation and safe browser-audio behavior
+- Study subjects including SAT
+- Lesson → test → personalized correction/retest flow
+- Study material upload UI
+- Focus canvas + 25-minute timer
+- Timetable and water break
+- Ask Focusly interface
+- Responsive mobile layout and PWA manifest
 
-## Deploy on GitHub Pages
-1. Create a GitHub repository.
-2. Upload the contents of this folder (not the ZIP itself if you want the site to publish directly).
-3. In Settings → Pages, choose the branch/folder containing `index.html`.
-4. Open the generated Pages URL.
+## GitHub Pages
+Upload the contents of this folder to the repository used for GitHub Pages.
 
-## Important backend note
-The front-end is functional as a static GitHub Pages site. Live AI answers, account authentication, cloud sync, push notifications, OCR/PDF intelligence, and persistent cross-device progress require a secure backend/API integration. Do not put private API keys in browser JavaScript.
+## Important browser notes
+Speech recognition is browser-dependent and may require permission. Voice choices come from the device/browser's available speech-synthesis voices.
+Audio cannot reliably autoplay with sound until a user gesture; the Continue button starts the calm beat after permission.
 
-## Audio
-The focus beat is generated in-browser with Web Audio so the package does not depend on a copyrighted music file. Browsers generally require a user gesture before audio can start.
-
-
-### Focus Mode audio
-A calm ambient beat is synthesized locally with the Web Audio API. It contains no external copyrighted recording. Mobile browsers may require the first tap/interaction before audible playback.
+The Ask Focusly UI is frontend-only in this static package. For a real AI tutor, connect a secure server-side AI backend. Never place a private API key in GitHub Pages client-side JavaScript.
