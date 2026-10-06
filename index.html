@@ -142,15 +142,57 @@
 </div>
 <script src="app.js"></script>
 
-<!-- Focusly Buddy enhancements -->
-<div id="focusly-enhancements" aria-live="polite">
-  <button id="buddyVoiceActivate" type="button" style="position:fixed;right:18px;bottom:18px;z-index:10000;border:0;border-radius:999px;padding:12px 16px;font-weight:700;box-shadow:0 6px 18px rgba(0,0,0,.14);">
-    🎙️ Activate Buddy Voice
-  </button>
-  <div id="focusly-lofi-controls" style="position:fixed;left:18px;bottom:18px;z-index:10000;display:flex;gap:8px;align-items:center;">
-    <button type="button" onclick="FocuslyLofi.toggle()" style="border:0;border-radius:999px;padding:10px 14px;font-weight:700;">🎧 Lo-fi</button>
-  </div>
-</div>
+<script id="focusly-calm-beat">
+(() => {
+  let ctx = null, master = null, timer = null, started = false;
+  const BPM = 68;
 
+  function startCalmBeat() {
+    if (started) {
+      if (ctx && ctx.state === "suspended") ctx.resume();
+      return;
+    }
+    try {
+      ctx = new (window.AudioContext || window.webkitAudioContext)();
+      master = ctx.createGain();
+      master.gain.value = 0.055;
+      master.connect(ctx.destination);
+
+      const play = (time, freq, duration, gainValue) => {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = "sine";
+        o.frequency.setValueAtTime(freq, time);
+        g.gain.setValueAtTime(0.0001, time);
+        g.gain.exponentialRampToValueAtTime(gainValue, time + 0.012);
+        g.gain.exponentialRampToValueAtTime(0.0001, time + duration);
+        o.connect(g); g.connect(master);
+        o.start(time); o.stop(time + duration + 0.02);
+      };
+
+      const beatMs = 60000 / BPM;
+      let step = 0;
+      timer = setInterval(() => {
+        const now = ctx.currentTime;
+        // soft kick-like pulse
+        if (step % 2 === 0) play(now, 92, 0.18, 0.16);
+        // gentle high pulse
+        if (step % 4 === 2) play(now, 520, 0.08, 0.035);
+        // quiet harmonic pad
+        play(now + 0.01, step % 8 < 4 ? 196 : 174, 0.42, 0.018);
+        step++;
+      }, beatMs);
+      started = true;
+      ctx.resume();
+    } catch (_) {}
+  }
+
+  // Browsers generally require a user gesture for audible playback.
+  ["pointerdown","touchstart","keydown","click"].forEach(ev =>
+    window.addEventListener(ev, startCalmBeat, {once:true, passive:true})
+  );
+  window.addEventListener("focusly:start-audio", startCalmBeat);
+})();
+</script>
 </body>
 </html>
