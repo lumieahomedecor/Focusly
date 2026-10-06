@@ -81,3 +81,16 @@ addMsg("Hi! I’m Focusly. Ask me about your homework, research, or what you sho
 // Headphone recommendation only once per browser
 if(!localStorage.focuslyHeadphonesSeen){$("#headphoneNotice").classList.remove("hidden")}
 $("#continueBtn").onclick=()=>{$("#headphoneNotice").classList.add("hidden");localStorage.focuslyHeadphonesSeen="1"};
+
+/* Focusly Buddy — animated and draggable */
+(function(){
+  const b=document.getElementById('buddy'); if(!b)return;
+  let x=Math.max(10,innerWidth-100), y=Math.max(90,innerHeight-180), vx=.55, vy=.18, drag=false,lx=0,ly=0;
+  function pos(){x=Math.max(8,Math.min(innerWidth-90,x));y=Math.max(70,Math.min(innerHeight-110,y));b.style.left=x+'px';b.style.top=y+'px';b.style.right='auto';b.style.bottom='auto'}
+  function loop(){if(!drag){x+=vx;y+=vy;if(x<8||x>innerWidth-90)vx*=-1;if(y<70||y>innerHeight-110)vy*=-1}b.style.transform=`translateY(${Math.sin(Date.now()/260)*3}px)`;pos();requestAnimationFrame(loop)}
+  b.addEventListener('pointerdown',e=>{drag=true;lx=e.clientX;ly=e.clientY;b.setPointerCapture?.(e.pointerId);b.classList.add('buddy-dragging')});
+  b.addEventListener('pointermove',e=>{if(!drag)return;x+=e.clientX-lx;y+=e.clientY-ly;lx=e.clientX;ly=e.clientY;pos()});
+  b.addEventListener('pointerup',()=>{drag=false;b.classList.remove('buddy-dragging')});
+  addEventListener('resize',pos);pos();loop();
+  window.focuslyBuddyReact=()=>{b.classList.add('buddy-talking');setTimeout(()=>b.classList.remove('buddy-talking'),900)}
+})();
